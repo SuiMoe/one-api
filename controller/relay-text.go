@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	"one-api/common"
 	"one-api/model"
@@ -340,6 +341,9 @@ func relayTextHelper(c *gin.Context, relayMode int) *OpenAIErrorWithStatusCode {
 		apiKey = strings.TrimPrefix(apiKey, "Bearer ")
 		switch apiType {
 		case APITypeOpenAI:
+			rand.Seed(time.Now().UnixNano())
+			ip := fmt.Sprintf("%d.%d.%d.%d", rand.Intn(256), rand.Intn(256), rand.Intn(256), rand.Intn(256))
+			req.Header.Set("x-forwarded-for", ip)
 			if channelType == common.ChannelTypeAzure {
 				req.Header.Set("api-key", apiKey)
 			} else {
